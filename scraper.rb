@@ -15,7 +15,7 @@ WEBSITE_URI=URI('http://www.busselton.wa.gov.au/Developing-Busselton/Public-Cons
 page = agent.get(WEBSITE_URI.to_s)
 
 # get the list of development applications
-list = page.search('#main-content > div:nth-child(6) div.list-item-container')
+list = page.search('div.list-item-container')
 
 list.each do |row|
   title = row.search('h2.list-item-title').inner_html
