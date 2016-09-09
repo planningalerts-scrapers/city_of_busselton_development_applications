@@ -1,25 +1,42 @@
+#!/usr/bin/env ruby
+
 # This is a template for a Ruby scraper on morph.io (https://morph.io)
 # including some code snippets below that you should find helpful
 
-# require 'scraperwiki'
-# require 'mechanize'
-#
-# agent = Mechanize.new
-#
-# # Read in a page
-# page = agent.get("http://foo.com")
-#
-# # Find somehing on the page using css selectors
-# p page.at('div.content')
-#
-# # Write out to the sqlite database using scraperwiki library
-# ScraperWiki.save_sqlite(["name"], {"name" => "susan", "occupation" => "software developer"})
-#
-# # An arbitrary query against the database
-# ScraperWiki.select("* from data where 'name'='peter'")
+require 'scraperwiki'
+require 'mechanize'
+require 'uri'
+require 'date'
 
-# You don't have to do things with the Mechanize or ScraperWiki libraries.
-# You can use whatever gems you want: https://morph.io/documentation/ruby
-# All that matters is that your final data is written to an SQLite database
-# called "data.sqlite" in the current working directory which has at least a table
-# called "data".
+agent = Mechanize.new
+
+# Read in a page
+WEBSITE_URI=URI('http://www.busselton.wa.gov.au/Developing-Busselton/Public-Consultation')
+page = agent.get(WEBSITE_URI.to_s)
+
+# get the list of development applications
+list = page.search('#main-content > div:nth-child(6) div.list-item-container')
+
+list.each do |row|
+  title = row.search('h2.list-item-title').inner_html
+  if title =~ /DA(\d{2})\/(\d{4}) -? (.*) -?\s*Lot (\d+) (.*)/
+    record = {}
+    record['council_reference'] = "DA#{$1}/#{$2}"
+    record['address']           = "Lot #{$4} #{$5}, WA"
+    record['description']       = $3.gsub(/ -$/, '')
+    record['info_url']          = row.search('a').attr("href").to_s
+    record['comment_url']       = "mailto'city'@busselton.wa.gov.au?subject=#{record['council_reference']}"
+    record['date_scraped']      = Date.today.to_s
+
+    on_notice_to_text           = row.search('p.applications-closing').inner_html.match(/Submissions closing on (.*)/)[1]
+    record['on_notice_to']      = Date.parse(on_notice_to_text).iso8601
+
+    if (ScraperWiki.select("* from data where `council_reference`='#{record['council_reference']}'").empty? rescue true)
+      ScraperWiki.save_sqlite(['council_reference'], record)
+    else
+      puts "Skipping already saved record " + record['council_reference']
+    end
+  else
+    $stderr.puts "Skipping #{title.strip.chomp.strip.chomp} as it is not a DA"
+  end
+end
