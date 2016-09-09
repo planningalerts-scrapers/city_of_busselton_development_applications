@@ -25,7 +25,7 @@ list.each do |row|
     record['address']           = "Lot #{$4} #{$5}, WA"
     record['description']       = $3.gsub(/ -$/, '')
     record['info_url']          = row.search('a').attr("href").to_s
-    record['comment_url']       = "mailto'city'@busselton.wa.gov.au?subject=#{record['council_reference']}"
+    record['comment_url']       = "mailto:city@busselton.wa.gov.au?subject=#{record['council_reference']}"
     record['date_scraped']      = Date.today.to_s
 
     on_notice_to_text           = row.search('p.applications-closing').inner_html.match(/Submissions closing on (.*)/)[1]
