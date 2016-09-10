@@ -34,6 +34,8 @@ list.each do |row|
       puts "Skipping already saved record " + record['council_reference']
     end
   else
+    # if it doesn't match the regexp above it's probably not a DA
+    # hopefully it's not just a strange string form..
     $stderr.puts "Skipping #{title.strip.chomp.strip.chomp} as it is not a DA"
   end
 end
