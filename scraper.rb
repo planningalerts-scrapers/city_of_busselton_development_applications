@@ -15,8 +15,13 @@ page = agent.get(WEBSITE_URI.to_s)
 list = page.search('div.list-item-container')
 
 list.each do |row|
-  title = row.search('h2.list-item-title').inner_html
-  if title =~ /DA(\d{2})\/(\d{4}) -? (.*) -?\s*Lot (\d+) (.*)/
+  # most of the required information is contained in one string
+  # inside the h2 element h2.list-item-title
+
+  title = row.search('h2.list-item-title').inner_html.strip
+
+  if title =~ /^DA(\d{2})\/(\d{4}) -? (.*) -?\s*Lot (\d+) (.*)/
+  #               year    int      description   lot-number rest-of-address
     record = {}
     record['council_reference'] = "DA#{$1}/#{$2}"
     record['address']           = "Lot #{$4} #{$5}, WA"
