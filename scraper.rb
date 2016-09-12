@@ -29,10 +29,10 @@ list.each do |row|
       raise BadData, "Skipping #{title} because it is not a DA"
     end
 
-    if title =~ /^DA(\d{2})\/(\d{4}) -? (.*) -?\s*Lot (\d+) (.*)/
+    if title =~ /^DA(\d{2})\/(\d{4}) -? (.*) -?\s*Lot (\d+) \(Hse (\d+)\) (.*)/
       #               year    int      description   lot-number rest-of-address
       record['council_reference'] = "DA#{$1}/#{$2}"
-      record['address']           = "Lot #{$4} #{$5}, WA"
+      record['address']           = "#{$5} #{$6}, WA"
       record['description']       = $3.gsub(/ -$/, '')
       record['info_url']          = row.search('a').attr("href").to_s
       record['comment_url']       = "mailto:city@busselton.wa.gov.au?subject=#{record['council_reference']}"
