@@ -33,6 +33,7 @@ list.each do |row|
       #               year    int      description   lot-number rest-of-address
       record['council_reference'] = "DA#{$1}/#{$2}"
       record['address']           = "#{$5} #{$6}, WA"
+      record['lot_number']        = $4
       record['description']       = $3.gsub(/ -$/, '')
       record['info_url']          = row.search('a').attr("href").to_s
       record['comment_url']       = "mailto:city@busselton.wa.gov.au?subject=#{record['council_reference']}"
