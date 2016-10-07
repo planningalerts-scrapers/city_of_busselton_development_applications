@@ -93,6 +93,6 @@ list.each do |row|
   rescue BadData
     # selector #main-content > div > div:nth-child(1) > p:nth-child(8) > strong:nth-child(3)
     # head > title
-    $stderr.puts "\e[31m\e[1m#{$!}\e[0m"
+    $stderr.puts $!
   end
 end
