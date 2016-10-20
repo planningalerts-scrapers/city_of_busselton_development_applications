@@ -53,12 +53,12 @@ class CoBPlanningScraper
       end
 
       if council_reference =~ /^AMD(\d{2})\/(\d{4})/
-	scheme_number = $1.to_i
-	amendment_number = $2.to_i
+        scheme_number = $1.to_i
+        amendment_number = $2.to_i
 
-	if title =~ /local planning scheme no. ?#{scheme_number}.* amendment no. ?#{amendment_number}/i
+        if title =~ /local planning scheme no. ?#{scheme_number}.* amendment no. ?#{amendment_number}/i
           return href
-	end
+        end
       end
     end
 
