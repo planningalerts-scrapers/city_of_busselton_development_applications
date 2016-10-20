@@ -5,9 +5,8 @@ require 'uri'
 require 'rexml/document'
 require 'logger'
 
-
-# Read in a page
-WEBSITE_URI=URI('http://www.busselton.wa.gov.au/externaldata/CoB_Advertised_DAs.xml')
+DATA_URI=URI('http://www.busselton.wa.gov.au/externaldata/CoB_Advertised_DAs.xml')
+WEBSITE_URI=URI('http://www.busselton.wa.gov.au/Developing-Busselton/Public-Consultation')
 
 TEMPLATE_RECORD = {
   'council_reference' => nil,
@@ -22,7 +21,7 @@ TEMPLATE_RECORD = {
 
 @logger = Logger.new(STDOUT)
 
-@document = REXML::Document.new(open(WEBSITE_URI.to_s))
+@document = REXML::Document.new(open(DATA_URI.to_s))
 
 @document.elements.each('/planning/applications/application') do |application|
   record = TEMPLATE_RECORD.clone
