@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'scraperwiki'
+require 'mechanize'
 require 'uri'
 require 'rexml/document'
 require 'logger'
