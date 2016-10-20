@@ -68,25 +68,31 @@ class CoBPlanningScraper
 
   def process
     @document.elements.each('/planning/applications/application') do |application|
-      record = TEMPLATE_RECORD.clone
+      begin
+        record = TEMPLATE_RECORD.clone
 
-      record.each do |key, value|
-	begin
-          record[key] = application.elements[key].text
-	rescue NoMethodError
-          record[key] = "No #{key} found in XML record"
-	end
-      end
+        record.each do |key, value|
+          begin
+            record[key] = application.elements[key].text
+          rescue NoMethodError
+            record[key] = "No #{key} found in XML record"
+            raise BadData, record[key]
+          end
+        end
 
-      # override XML supplied values with scraped values
-      record['info_url'] = find_info_url(record['council_reference'])
-      record['comment_url'] = record['info_url']
+        # override XML supplied values with scraped values
+        record['info_url'] = find_info_url(record['council_reference'])
+        record['comment_url'] = record['info_url']
 
-      if (ScraperWiki.select("* from data where `council_reference`='#{record['council_reference']}'").empty? rescue true)
-        @logger.info "Saving new record #{record['council_reference']} #{record['description']}"
-        ScraperWiki.save_sqlite(['council_reference'], record)
-      else
-        @logger.info "Skipping already saved record " + record['council_reference']
+        if (ScraperWiki.select("* from data where `council_reference`='#{record['council_reference']}'").empty? rescue true)
+          @logger.info "Saving new record #{record['council_reference']} #{record['description']}"
+          ScraperWiki.save_sqlite(['council_reference'], record)
+        else
+          @logger.info "Skipping already saved record " + record['council_reference']
+        end
+
+      rescue BadData
+        @logger.error $!
       end
     end
   end
