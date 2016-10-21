@@ -4,7 +4,6 @@ require 'scraperwiki'
 require 'mechanize'
 require 'uri'
 require 'rexml/document'
-require 'logger'
 
 class CoBPlanningScraper
 
@@ -32,7 +31,6 @@ class CoBPlanningScraper
 
   def initialize()
     @agent = Mechanize.new
-    @logger = Logger.new(STDOUT)
 
     @document = REXML::Document.new(open(DATA_URI.to_s))
 
@@ -85,14 +83,14 @@ class CoBPlanningScraper
         record['comment_url'] = record['info_url']
 
         if (ScraperWiki.select("* from data where `council_reference`='#{record['council_reference']}'").empty? rescue true)
-          @logger.info "Saving new record #{record['council_reference']} #{record['description']}"
+          puts "Saving new record #{record['council_reference']} #{record['description']}"
           ScraperWiki.save_sqlite(['council_reference'], record)
         else
-          @logger.info "Skipping already saved record " + record['council_reference']
+          puts "Skipping already saved record " + record['council_reference']
         end
 
       rescue BadData
-        @logger.error $!
+        $stderr.puts $!
       end
     end
   end
