@@ -4,6 +4,7 @@ require 'scraperwiki'
 require 'mechanize'
 require 'uri'
 require 'rexml/document'
+require 'date'
 
 class CoBPlanningScraper
 
@@ -81,6 +82,10 @@ class CoBPlanningScraper
         # override XML supplied values with scraped values
         record['info_url'] = find_info_url(record['council_reference'])
         record['comment_url'] = record['info_url']
+
+        # date_scraped is not found in the XML document, so it needs
+        # to be added here
+        record['date_scraped'] = Date.today.to_s
 
         if (ScraperWiki.select("* from data where `council_reference`='#{record['council_reference']}'").empty? rescue true)
           puts "Saving new record #{record['council_reference']} #{record['description']}"
