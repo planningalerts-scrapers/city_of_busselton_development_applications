@@ -13,10 +13,10 @@ class CoBPlanningScraper
 
   # URI of the generated XML document containing the advertised proposals for
   # comment
-  DATA_URI=URI('http://www.busselton.wa.gov.au/externaldata/CoB_Advertised_DAs.xml')
+  DATA_URI=URI('https://www.busselton.wa.gov.au/externaldata/CoB_Advertised_DAs.xml')
 
   # The advertising document for public consultations
-  WEBSITE_URI=URI('http://www.busselton.wa.gov.au/Developing-Busselton/Public-Consultation')
+  WEBSITE_URI=URI('https://www.busselton.wa.gov.au/Developing-Busselton/Public-Consultation')
 
   # A template of the object that is ultimately recorded into the database.
   TEMPLATE_RECORD = {
