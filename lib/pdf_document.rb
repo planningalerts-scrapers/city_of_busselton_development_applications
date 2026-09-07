@@ -31,7 +31,7 @@ class PdfDocument
         #   -noroundcoord         : do not round coordinates (with XML output only) ??
         #   -nomerge              : do not merge paragraphs ??
         #   -enc <string>         : output text encoding name
-        command = "/usr/bin/pdftohtml -s -i -noframes -xml -nomerge -enc UTF-8 #{src.path} #{dst.path}"
+        command = "pdftohtml -s -i -noframes -xml -nomerge -enc UTF-8 #{src.path} #{dst.path}"
         puts "Running pdftohtml to convert pdf to xml pages..."
         # Outputs page numbers read ...
         system(command)
