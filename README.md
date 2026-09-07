@@ -76,6 +76,11 @@ Format: Each PDF is a concatenation of weekly "Applications Lodged – DD/MM/YYY
 ordered from the most recent week to the earliest week for the year. The date range heading repeats on every
 page of each weekly section.
 
+Since late August 2026, newly generated weekly sections use a new template: the heading reads
+"Applications Lodged – DD/MM/YYYY to DD/MM/YYYY" (the word "to" as the range separator, with single-digit
+days possible) and may be split across two adjacent text nodes in the converted XML. Older sections in the
+same PDF keep the original single-node en-dash format, so the scraper accepts both.
+
 Each weekly section lists one or more groups (eg "Development Applications" or "Building Applications"),
 each preceded by a bold group heading and a table with columns:
 
