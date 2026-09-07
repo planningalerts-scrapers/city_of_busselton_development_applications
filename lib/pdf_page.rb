@@ -2,6 +2,8 @@ require "scraperwiki"
 require "tempfile"
 require "tmpdir"
 
+require_relative "constants"
+
 # PDF Page
 # Based on https://github.com/planningalerts-scrapers/ruby_pdf_helper
 class PdfPage
@@ -68,23 +70,43 @@ class PdfPage
 
   # Skips page heading
   # Sets `@page_header` and `@lodged_upto_date`
+  # The "Applications Lodged" heading may sit in a single text node or be split
+  # across adjacent nodes, so accumulate header text until it contains a date
   # @return [Boolean] true if table heading found (bold text), otherwise false
   def skip_page_heading_and_footer
+    header = nil
     loop do
       entry = @enum.peek
       top = entry["top"].to_i
-      return true if DATA_TOP_RANGE.include?(top)
+      if DATA_TOP_RANGE.include?(top)
+        capture_page_header(header)
+        return true
+      end
 
-      if entry.text =~ %r{Applications Lodged\s.*\s([0-3]?\d)/([0-1]?\d)/(\d{4})}
-        @lodged_upto_date = Date.new(::Regexp.last_match(3).to_i, ::Regexp.last_match(2).to_i,
-                                     ::Regexp.last_match(1).to_i)
-        @page_header = entry.text.strip
-        puts "Page header: #{@page_header}"
+      text = entry.text.strip
+      if header.nil?
+        header = text if text.match?(/Applications Lodged/)
+      elsif !header.match?(Constants::DATE_PATTERN)
+        header = "#{header} #{text}".strip
       end
       @enum.next
     end
   rescue StopIteration
+    capture_page_header(header)
     false
+  end
+
+  # Sets `@page_header` and `@lodged_upto_date` from the last date in the
+  # header text, accepting any date range separator (en dash or "to")
+  def capture_page_header(header)
+    return unless header
+
+    last_date = header.scan(Constants::DATE_PATTERN).last
+    return unless last_date
+
+    @lodged_upto_date = Date.strptime(last_date, "%d/%m/%Y")
+    @page_header = header
+    puts "Page header: #{@page_header}"
   end
 
   # Processes group and/or table headings
